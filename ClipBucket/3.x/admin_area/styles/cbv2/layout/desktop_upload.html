@@ -1,0 +1,422 @@
+<script language="javascript">
+{literal}
+$(document).ready(function(){
+
+	var thehash = window.location.hash.substr(9,3);
+	$("#tabbed_div > div").hide();
+	if(thehash=='')
+	{
+		display_tab('#tab_1','div_1');
+	}else{
+		display_tab('#tab_'+thehash,'div_'+thehash);
+	}
+
+});
+{/literal}
+</script>
+<script src="{$baseurl}/plugins/desktop_upload.admin-ui/js/desktop.js?{math equation='rand()'}" type="text/javascript"></script>
+<ul class="cbtab">
+  <li onClick='display_tab(this,"div_1",true)' id="tab_1">Desktop Upload Settings</li>
+</ul>
+<div class="clearfix"></div>
+
+<form name="form1" method="post" action="" id="main_form">
+<div id="tabbed_div">
+    <div id="div_1" class="main_page_div">
+
+        <fieldset class="fieldset" style="border:none">
+
+	<fieldset style="border-color: #d2d2d2; margin-bottom: 20px;">
+        <legend style="font-size: 14pt">General Desktop Upload Settings</legend>
+
+            <table cellspacing="5" cellpadding="2">
+                <tr>
+                <td width="200" valign="top">Desktop Upload Enabled</td>
+                <td valign="top">
+                    <input name="upload_allowed" type="radio" id="DesktopOn" value="1" {if $desktopConfig.upload_allowed == 1}CHECKED{/if}>&nbsp;Yes&nbsp;
+                    <input name="upload_allowed" type="radio" id="DesktopOff" value="0" {if $desktopConfig.upload_allowed == 0}CHECKED{/if}>&nbsp;No&nbsp;
+                </td>
+                </tr>
+            </table>
+
+            <div id="AllSettings" {if $desktopConfig.upload_allowed == 0}style="display: none;"{/if}>
+            <table cellspacing="5" cellpadding="2">
+            <tr>
+              <td width="200" valign="top">Upload Quota Type</td>
+              <td valign="top">
+                <input type="radio" id="uploadQuota-global" name="UploadQuota" value="global" {if $desktopConfig.UploadQuota == 'global'} CHECKED{/if} />&nbsp;Global&nbsp;
+                <input type="radio" id="uploadQuota-user" name="UploadQuota" value="per_user" {if $desktopConfig.UploadQuota == 'per_user'} CHECKED{/if} />&nbsp;Per-Usergroup
+              </td>
+            </tr>
+            <tr>
+              <td width="200" valign="top">Moderation Rules</td>
+              <td valign="top">
+                <input type="radio" id="moderateGlobal" name="ModerateRules" value="global" {if $desktopConfig.ModerateRules == 'global'} CHECKED{/if} />&nbsp;Global&nbsp;
+                <input type="radio" id="moderateUser" name="ModerateRules" value="per_user" {if $desktopConfig.ModerateRules == 'per_user'} CHECKED{/if} />&nbsp;Per-Usergroup&nbsp;
+              </td>
+            </tr>
+            <tr>
+              <td width="200" valign="top">Allow Duplicate Uploads</td>
+              <td valign="top">
+                <input type="radio" name="AllowDuplicates" value="1" {if $desktopConfig.AllowDuplicates == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                <input type="radio" name="AllowDuplicates" value="0" {if $desktopConfig.AllowDuplicates == 0} CHECKED{/if} />&nbsp;No&nbsp;
+              </td>
+            </tr>
+
+            <tr>
+              <td width="200" valign="top">Allow Empty Fields</td>
+              <td valign="top">
+                <input type="radio" name="AllowEmptyFields" value="1" {if $desktopConfig.AllowEmptyFields == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                <input type="radio" name="AllowEmptyFields" value="0" {if $desktopConfig.AllowEmptyFields == 0} CHECKED{/if} />&nbsp;No&nbsp;
+              </td>
+            </tr>
+
+            <tr>
+              <td width="200" valign="top">Allow Torrent Uploads</td>
+              <td valign="top">
+                <input type="radio" name="AllowTorrents" value="0" {if $desktopConfig.AllowTorrents == 0} CHECKED{/if} />&nbsp;Disabled&nbsp;
+                <input type="radio" name="AllowTorrents" value="1" {if $desktopConfig.AllowTorrents == 1} CHECKED{/if} />&nbsp;Optional&nbsp;
+                <input type="radio" name="AllowTorrents" value="2" {if $desktopConfig.AllowTorrents == 2} CHECKED{/if} />&nbsp;Required&nbsp;
+              </td>
+            </tr>
+            <tr>
+              <td width="200" valign="top">Display User Avatar</td>
+              <td valign="top">
+                <input type="radio" name="DisplayAvatar" value="1" {if $desktopConfig.DisplayAvatar == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                <input type="radio" name="DisplayAvatar" value="0" {if $desktopConfig.DisplayAvatar == 0} CHECKED{/if} />&nbsp;No&nbsp;
+              </td>
+            </tr>
+            </table>
+            </div>
+        </fieldset>
+
+    <!-- START audio settings -->
+    <div id="AudioSettings" {if $desktopConfig.upload_allowed == 0} style="display: none;"{/if}>
+	<fieldset style="margin-bottom: 20px;">
+        <legend style="font-size: 14pt">Desktop Upload Audio Settings</legend>
+
+	    <table border="0" cellspacing="5" cellpadding="2">
+            <tr>
+                <td width="200" valign="top">Allow Audio Upload</td>
+                <td>
+                    <input type="radio" id="AudioUploadOn" name="AudioAllowUpload" value="1" {if $desktopConfig.AudioAllowUpload == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                    <input type="radio" id="AudioUploadOff" name="AudioAllowUpload" value="0" {if $desktopConfig.AudioAllowUpload == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                </td>
+            </tr>
+	    </table>
+
+        <!-- START audio specific -->
+        <div id="AudioSpecific" {if $desktopConfig.AudioAllowUpload != 1}style="display: none;"{/if}>
+        <div id="AdminApproveAudio" {if $desktopConfig.ModerateRules == 'per_user'}style="display: none;"{/if}>
+	            <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Moderate each audio upload</td>
+                        <td>
+                            <input type="radio" name="AudioModerate" value="1" {if $desktopConfig.AudioModerate == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                            <input type="radio" name="AudioModerate" value="0" {if $desktopConfig.AudioModerate == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                        </td>
+                    </tr>
+	            </table>
+        </div>
+
+        <div id="AudioRequirePic">
+	            <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Require image attachment with each audio upload</td>
+                        <td>
+                            <input type="radio" name="AudioRequirePic" value="1" {if $desktopConfig.AudioRequirePic == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                            <input type="radio" name="AudioRequirePic" value="0" {if $desktopConfig.AudioRequirePic == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                        </td>
+                    </tr>
+	            </table>
+        </div>
+
+        <div id="AudioMaxFileSize" {if $desktopConfig.UploadQuota == 'per_user' || $desktopConfig.AudioAllowUpload == 0} style="display: none;"{/if} >
+	            <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Max Audio Size<br />(in bytes)</td>
+                        <td>
+                            <input size="60" type="text" name="AudioMaxFileSize" value="{$desktopConfig.AudioMaxFileSize}" />
+                        </td>
+                    </tr>
+                </table>
+        </div>
+        </div>
+        <!-- END audio specific -->
+
+    </fieldset>
+    </div>
+    <!-- END audio settings -->
+
+    <!-- START image settings -->
+    <div id="ImageSettings" {if $desktopConfig.upload_allowed == 0} style="display: none;"{/if}>
+	<fieldset style="margin-bottom: 20px;">
+        <legend style="font-size: 14pt">Desktop Upload Image Settings</legend>
+
+	    <table border="0" cellspacing="5" cellpadding="2">
+            <tr>
+                <td width="200" valign="top">Allow Image Upload</td>
+                <td>
+                    <input type="radio" id="ImageUploadOn" name="ImageAllowUpload" value="1" {if $desktopConfig.ImageAllowUpload == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                    <input type="radio" id="ImageUploadOff" name="ImageAllowUpload" value="0" {if $desktopConfig.ImageAllowUpload == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                </td>
+            </tr>
+	    </table>
+
+        <!-- START image specific -->
+        <div id="ImageSpecific">
+        <div id="AdminApproveImage" {if $desktopConfig.ModerateRules == 'per_user'}style="display: none;"{/if}>
+	            <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Moderate each image upload</td>
+                        <td>
+                            <input type="radio" name="ImageModerate" value="1" {if $desktopConfig.ImageModerate == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                            <input type="radio" name="ImageModerate" value="0" {if $desktopConfig.ImageModerate == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                        </td>
+                    </tr>
+	            </table>
+        </div>
+
+        <div id="ImageMaxFileSize" {if $desktopConfig.UploadQuota == 'per_user' || $desktopConfig.ImageAllowUpload == 0} style="display: none;"{/if} >
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Max Image Size<br />(in bytes)</td>
+                    <td>
+                        <input size="60" type="text" name="ImageMaxFileSize" value="{$desktopConfig.ImageMaxFileSize}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Allowed Image Source Types<br />(comma separated)</td>
+                    <td>
+                        <input size="60" type="text" name="ImageAllowExtensions" value="{$desktopConfig.ImageAllowExtensions}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- END image specific -->
+
+    </fieldset>
+    </div>
+    <!-- END image settings -->
+
+    <!-- START video settings -->
+    <div id="VideoSettings" {if $desktopConfig.upload_allowed == 0} style="display: none;"{/if}>
+	<fieldset style="margin-bottom: 20px;">
+        <legend style="font-size: 14pt">Desktop Upload Video Settings</legend>
+
+	    <table border="0" cellspacing="5" cellpadding="2">
+            <tr>
+                <td width="200" valign="top">Allow Video Upload</td>
+                <td>
+                    <input type="radio" id="VideoUploadOn" name="VideoAllowUpload" value="1" {if $desktopConfig.VideoAllowUpload == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                    <input type="radio" id="VideoUploadOff" name="VideoAllowUpload" value="0" {if $desktopConfig.VideoAllowUpload == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                </td>
+            </tr>
+	    </table>
+
+        <!-- START video specific -->
+        <div id="VideoSpecific" {if $desktopConfig.VideoAllowUpload != 1}style="display: none;"{/if}>
+        <div id="AdminApproveVideo" {if $desktopConfig.ModerateRules == 'per_user'}style="display: none;"{/if}>
+	            <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Moderate each video upload</td>
+                        <td>
+                            <input type="radio" name="VideoModerate" value="1" {if $desktopConfig.VideoModerate == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                            <input type="radio" name="VideoModerate" value="0" {if $desktopConfig.VideoModerate == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                        </td>
+                    </tr>
+	            </table>
+        </div>
+
+        <div id="VideoMaxFileSize" {if $desktopConfig.UploadQuota == 'per_user' || $desktopConfig.VideoAllowUpload == 0} style="display: none;"{/if} >
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Max Video Size<br />(in bytes)</td>
+                    <td>
+                        <input size="60" type="text" name="VideoMaxFileSize" value="{$desktopConfig.VideoMaxFileSize}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+	    <table border="0" cellspacing="5" cellpadding="2">
+            <tr>
+                <td width="200" valign="top">Allowed Video Output<br />(in bytes)</td>
+                <td>
+                    <input type="checkbox" name="VideoFormatDivX" {if in_array('divx',$desktopConfig.VideoFormats)}CHECKED{/if} value="divx" />&nbsp;DivX&nbsp;
+                    <input type="checkbox" name="VideoFormatFLV" {if in_array('flv',$desktopConfig.VideoFormats)}CHECKED{/if} value="flv" />&nbsp;FLV&nbsp;
+                    <input type="checkbox" name="VideoFormatMP4" {if in_array('mp4',$desktopConfig.VideoFormats)}CHECKED{/if} value="mp4" />&nbsp;MP4&nbsp;
+                </td>
+            </tr>
+	    </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Allowed Video Source Types<br />(comma separated)</td>
+                    <td>
+                        <input size="100" type="text" name="VideoAllowExtensions" value="{$desktopConfig.VideoAllowExtensions}" />
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Video Resize</td>
+                    <td>
+                        <select id="VideoResizeType" name="VideoResizeType">
+                            <option value="0" {if $desktopConfig.VideoResizeType == 0}SELECTED{/if}>No Resizing</option>
+                            <option value="1" {if $desktopConfig.VideoResizeType == 1}SELECTED{/if}>Exact Resize</option>
+                            <option value="2" {if $desktopConfig.VideoResizeType == 2}SELECTED{/if}>Resize & Maintain Aspect Ratio</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+        <div id="ResizeDim" {if $desktopConfig.Video-ResizeType == 0} style="display: none;"{/if}>
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Resize Video to<br />(WxH)</td>
+                    <td>
+                        <input size="60" type="text" id="VideoResolution" name="VideoResolution" value="{$desktopConfig.VideoResolution}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Enable Video Watermarking</td>
+                    <td>
+                        <input type="radio" id="VideoWatermarkOn" name="VideoWatermarkEnabled" value="1" {if $desktopConfig.VideoWatermarkEnabled == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                        <input type="radio" id="VideoWatermarkOff" name="VideoWatermarkEnabled" value="0" {if $desktopConfig.VideoWatermarkEnabled == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                    </td>
+                </tr>
+            </table>
+
+        <div id="VideoWatermarking" {if $desktopConfig.VideoWatermarkEnabled == 0} style="display: none;"{/if}>
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Watermark URL<br />(location of video watermark)</td>
+                    <td>
+                        <input size="100" type="text" id="WatermarkURL" name="WatermarkURL" value="{$desktopConfig.WatermarkURL}" />
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Watermark Position</td>
+                    <td>
+                        <select id="VideoWatermarkPosition" name="VideoWatermarkPosition">
+                            <option value="top-left" {if $desktopConfig.VideoWatermarkPosition == "top-left"}SELECTED{/if}>Top Left</option>
+                            <option value="top-right" {if $desktopConfig.VideoWatermarkPosition == "top-right"}SELECTED{/if}>Top Right</option>
+                            <option value="bottom-left" {if $desktopConfig.VideoWatermarkPosition == "bottom-left"}SELECTED{/if}>Bottom Left</option>
+                            <option value="bottom-right" {if $desktopConfig.VideoWatermarkPosition == "bottom-right"}SELECTED{/if}>Bottom Right</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Horizontal Offset<br />(specifies horizontal distance between left watermark side and video frame border)</td>
+                    <td>
+                        <input size="60" type="text" id="VideoWatermarkOffsetX" name="VideoWatermarkOffsetX" value="{$desktopConfig.VideoWatermarkOffsetX}" />
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Vertical Offset<br />(specifies vertical distance between top watermark side and video frame border)</td>
+                    <td>
+                        <input size="60" type="text" id="VideoWatermarkOffsetY" name="VideoWatermarkOffsetY" value="{$desktopConfig.VideoWatermarkOffsetY}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        </div>
+        <!-- END video specific -->
+
+    </fieldset>
+    </div>
+    <!-- END video settings -->
+
+    <!-- START YouTube settings -->
+    <div id="YouTubeSettings" {if $desktopConfig.upload_allowed == 0} style="display: none;"{/if}>
+	<fieldset style="margin-bottom: 20px;">
+        <legend style="font-size: 14pt">Desktop Upload YouTube Settings</legend>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Allow YouTube Download</td>
+                    <td>
+                        <input type="radio" name="VideoAllowYTDownload" value="1" {if $desktopConfig.VideoAllowYTDownload == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                        <input type="radio" name="VideoAllowYTDownload" value="0" {if $desktopConfig.VideoAllowYTDownload == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                    </td>
+                </tr>
+            </table>
+
+            <table border="0" cellspacing="5" cellpadding="2">
+                <tr>
+                    <td width="200" valign="top">Allow YouTube Embed</td>
+                    <td>
+                        <input id="YTEmbedOn" type="radio" name="VideoAllowYTEmbed" value="1" {if $desktopConfig.VideoAllowYTEmbed == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                        <input id="YTEmbedOff" type="radio" name="VideoAllowYTEmbed" value="0" {if $desktopConfig.VideoAllowYTEmbed == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                    </td>
+                </tr>
+            </table>
+
+            <!-- START YouTube embed specific -->
+            <div id="YouTubeEmbedSpecific" {if $desktopConfig.VideoAllowYTEmbed != 1} style="display: none;"{/if}>
+                <table border="0" cellspacing="5" cellpadding="2">
+                    <tr>
+                        <td width="200" valign="top">Resize YouTube Embed Code</td>
+                        <td>
+                            <input id="YTResizeEmbedOn" type="radio" name="YTResizeEmbedCode" value="1" {if $desktopConfig.YTResizeEmbedCode == 1} CHECKED{/if} />&nbsp;Yes&nbsp;
+                            <input id="YTResizeEmbedOff" type="radio" name="YTResizeEmbedCode" value="0" {if $desktopConfig.YTResizeEmbedCode == 0} CHECKED{/if} />&nbsp;No&nbsp;
+                        </td>
+                    </tr>
+                </table>
+
+                <div id="YouTubeEmbedResizeDim" {if $desktopConfig.YTResizeEmbedCode != 1} style="display: none;"{/if}>
+                    <table border="0" cellspacing="5" cellpadding="2">
+                        <tr>
+                            <td width="200" valign="top">Target Width</td>
+                            <td>
+                                <input type="text" name="YTResizeWidth" value="{$desktopConfig.YTResizeWidth}" />
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table border="0" cellspacing="5" cellpadding="2">
+                        <tr>
+                            <td width="200" valign="top">Target Height</td>
+                            <td>
+                                <input type="text" name="YTResizeHeight" value="{$desktopConfig.YTResizeHeight}" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- END YouTube embed specific -->
+
+    </fieldset>
+    </div>
+    <!-- END YouTube settings -->
+
+
+</fieldset>
+  </div>
+
+</div>
+<div align="right"class="main_page_div" style="padding:5px; min-height:0px; margin-top:10px"><label>
+  <input type="submit" name="commit" class="button" value="Update Desktop Upload Settings" id="commit" />
+</label>
+</div>
+</form>
