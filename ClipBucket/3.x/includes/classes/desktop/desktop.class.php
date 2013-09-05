@@ -22,9 +22,16 @@ ini_set('display_errors', false);
 class desktop
 {
 // START desktop.class.php
+    function __construct( $tablePrefix = '' )
+    {
+        if( !defined('TABLE_PREFIX') ) {
+            define( 'TABLE_PREFIX', $tablePrefix );
+        }
+    }
+	
     function login($username,$password)
     {
-        $sql    = "SELECT * FROM cb_users WHERE username = '".mysql_real_escape_string($username)."'";
+        $sql    = "SELECT * FROM ".TABLE_PREFIX."_users WHERE username = '".mysql_real_escape_string($username)."'";
         $sql   .= " AND password = '".mysql_real_escape_string($password)."'";
         $sql   .= " OR email = '".mysql_real_escape_string($username)."'";
         $sql   .= " AND password = '".mysql_real_escape_string($password)."' LIMIT 1";
@@ -69,7 +76,7 @@ class desktop
             $_SESSION['allow_ytdl']     = $perms['desktop_allow_youtube_download'];
             $_SESSION['allow_ytembed']  = $perms['desktop_allow_youtube_embed'];
 
-            $sql    = "UPDATE cb_users SET last_logged = '".self::current_mysql_timestamp()."'";
+            $sql    = "UPDATE ".TABLE_PREFIX."users SET last_logged = '".self::current_mysql_timestamp()."'";
             $sql   .= " WHERE userid = '".$_SESSION['userid']."' LIMIT 1";
             mysql_query($sql) OR die(mysql_error());
 
@@ -96,7 +103,7 @@ class desktop
 
     function fetch_categories($type = 'video')
     {
-        $sql    = "SELECT * FROM cb_video_categories ";
+        $sql    = "SELECT * FROM ".TABLE_PREFIX."video_categories ";
         $sql   .= "WHERE category_type = '".$type."' ";
         $sql   .= "ORDER BY category_name ASC";
         $res    = mysql_query($sql) or die(mysql_error());
@@ -113,7 +120,7 @@ class desktop
 
     function media_md5_exists($md5)
     {
-        $sql    = "SELECT media_md5 FROM cb_video";
+        $sql    = "SELECT media_md5 FROM ".TABLE_PREFIX."video";
         $sql   .= " WHERE media_md5 = '".$md5."' LIMIT 1";
         $res    = mysql_query($sql) or die(mysql_error());
         if(mysql_num_rows($res) > 0)
@@ -124,7 +131,7 @@ class desktop
 
     function torrent_md5_exists($md5)
     {
-        $sql    = "SELECT torrent_md5 FROM cb_video";
+        $sql    = "SELECT torrent_md5 FROM ".TABLE_PREFIX."video";
         $sql   .= " WHERE torrent_md5 = '".$md5."' LIMIT 1";
         $res    = mysql_query($sql) or die(mysql_error());
         if(mysql_num_rows($res) > 0)
@@ -156,7 +163,7 @@ class desktop
                 $active = 1;
         }
 
-        $sql    = "INSERT INTO cb_video(videokey,userid,title,file_name,original_filename,";
+        $sql    = "INSERT INTO ".TABLE_PREFIX."video(videokey,userid,title,file_name,original_filename,";
         $sql   .= "description,tags,category,broadcast,location,datecreated,";
         $sql   .= "country,allow_embedding,allow_comments,comment_voting,";
         $sql   .= "allow_rating,active,date_added,duration,status,embed_code,embed_url,";
@@ -217,7 +224,7 @@ class desktop
                 $active = 'yes';
         }
 
-        $sql    = "INSERT INTO cb_video(videokey,userid,title,file_name,original_filename,";
+        $sql    = "INSERT INTO ".TABLE_PREFIX."video(videokey,userid,title,file_name,original_filename,";
         $sql   .= "description,tags,category,broadcast,location,datecreated,";
         $sql   .= "country,allow_embedding,allow_comments,comment_voting,";
         $sql   .= "allow_rating,active,date_added,status,";
@@ -274,7 +281,7 @@ class desktop
                 $active = 'yes';
         }
 
-        $sql    = "INSERT INTO cb_video(videokey,userid,title,file_name,original_filename,";
+        $sql    = "INSERT INTO ".TABLE_PREFIX."video(videokey,userid,title,file_name,original_filename,";
         $sql   .= "description,tags,category,broadcast,location,datecreated,";
         $sql   .= "country,allow_embedding,allow_comments,comment_voting,";
         $sql   .= "allow_rating,active,date_added,status,";
@@ -311,7 +318,7 @@ class desktop
 
 	function fetch_desktop_details()
     {
-	    $query = mysql_query("SELECT * FROM cb_desktop_config");
+	    $query = mysql_query("SELECT * FROM ".TABLE_PREFIX."desktop_config");
 	        while($row = mysql_fetch_array($query))
             {
 	            $name = $row['name'];
@@ -322,7 +329,7 @@ class desktop
 
 	function fetch_site_config()
     {
-	    $query = mysql_query("SELECT * FROM cb_config");
+	    $query = mysql_query("SELECT * FROM ".TABLE_PREFIX."config");
 	        while($row = mysql_fetch_array($query))
             {
 	            $name = $row['name'];
@@ -333,7 +340,7 @@ class desktop
 
 	function set_desktop_config($name,$value)
     {
-	    mysql_query("UPDATE cb_desktop_config SET value = '".$value."' WHERE name ='".$name."'");
+	    mysql_query("UPDATE ".TABLE_PREFIX."desktop_config SET value = '".$value."' WHERE name ='".$name."'");
 	}
 
 	function fetch_desktop_lang($iso_code)
@@ -349,7 +356,7 @@ class desktop
 
 	function user_avatar($userid,$size='')
 	{
-	    $query  = "SELECT avatar, avatar_url FROM cb_users ";
+	    $query  = "SELECT avatar, avatar_url FROM ".TABLE_PREFIX."users ";
         $query .= "WHERE userid = '".$userid."' LIMIT 1";
         $res    = mysql_query($query) OR die(mysql_error());
 	    $data   = mysql_fetch_array($res);
@@ -478,7 +485,7 @@ class desktop
             return;
         }
 
-        $sql    = "UPDATE cb_users SET last_active = '".self::current_mysql_timestamp()."',";
+        $sql    = "UPDATE ".TABLE_PREFIX."users SET last_active = '".self::current_mysql_timestamp()."',";
         $sql   .= "ip = '".$_SERVER['REMOTE_ADDR']."' ";
         $sql   .= "WHERE userid = '".mysql_real_escape_string($_SESSION['userid'])."' LIMIT 1";
         mysql_query($sql) OR die(mysql_error());
@@ -494,7 +501,7 @@ class desktop
 
     function category_count($type = 'video')
     {
-        $sql    = "SELECT COUNT(type) AS count FROM cb_video_categories";
+        $sql    = "SELECT COUNT(type) AS count FROM ".TABLE_PREFIX."video_categories";
         $sql   .= " WHERE type = '".$type."'";
 
         $res    = mysql_query($sql) or die(mysql_error());
@@ -627,7 +634,7 @@ class desktop
             return;
         }
 
-        $sql    = "SELECT * FROM cb_users WHERE userid = '".mysql_real_escape_string($_SESSION['userid'])."'";
+        $sql    = "SELECT * FROM ".TABLE_PREFIX."users WHERE userid = '".mysql_real_escape_string($_SESSION['userid'])."'";
         $sql   .= " LIMIT 1";
         $res    = mysql_query($sql) OR die(mysql_error());
 
@@ -779,7 +786,7 @@ class desktop
 
     function fetch_usergroup_permissions($user_level_id)
     {
-        $sql    = "SELECT * FROM cb_user_levels_permissions ";
+        $sql    = "SELECT * FROM ".TABLE_PREFIX."user_levels_permissions ";
         $sql   .= "WHERE user_level_id = '".mysql_real_escape_string($user_level_id)."' ";
         $sql   .= "LIMIT 1";
         $res    = mysql_query($sql) or die(mysql_error());
@@ -819,7 +826,7 @@ class desktop
 	 */
 	function vkey_exists($key)
 	{
-        $sql    = "SELECT videokey FROM cb_video ";
+        $sql    = "SELECT videokey FROM ".TABLE_PREFIX."video ";
         $sql   .= "WHERE videokey = '".mysql_real_escape_string($key)."' ";
         $sql   .= "LIMIT 1";
         $res    = mysql_query($sql) or die(mysql_error());
@@ -855,7 +862,7 @@ class desktop
 
     function increment_video_count()
     {
-        $sql    = "UPDATE cb_users SET total_videos = total_videos+1 ";
+        $sql    = "UPDATE ".TABLE_PREFIX."users SET total_videos = total_videos+1 ";
         $sql   .= "WHERE userid = '".$_SESSION['userid']."' LIMIT 1";
         mysql_query($sql) OR die(mysql_error());
     }
