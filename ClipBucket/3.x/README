@@ -1,6 +1,6 @@
 Find in: ./includes/functions_videos.php:
 
-
+```php
 /**
  * get user basic fields
  * 
@@ -20,12 +20,13 @@ function get_video_fields($extra_fields=NULL)
 
     return $fields;
 }
+```
 
 
 Change to:
 
 
-
+```php
 /**
  * get user basic fields
  * 
@@ -45,3 +46,4 @@ function get_video_fields($extra_fields=NULL)
 
     return $fields;
 }
+```
